@@ -7,6 +7,42 @@ namespace Ebcdic.Utilities.Tests;
 
 public class BinaryReaderExtensionMethodsTest
 {
+    private void VerifyValueFromByteStream<T>(T expected, Func<BinaryReader, T> act, byte[] bytes)
+    {
+        using (var stream = new MemoryStream(bytes))
+        using (var reader = new BinaryReader(stream))
+        {
+            // Act
+            var actual = act(reader);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+    }
+
+    private void VerifyBytesConsumed(Action<BinaryReader> act, int expectedNumberOfBytes)
+    {
+        var bytes = new byte[2 * expectedNumberOfBytes];
+        using var stream = new MemoryStream(bytes);
+        using var reader = new BinaryReader(stream);
+        // Act
+        act(reader);
+
+        // Assert
+        stream.Position.Should().Be(expectedNumberOfBytes, "Wrong number of bytes were consumed.");
+    }
+
+    private void VerifyThrowsExceptionIfStreamTooShort(Action<BinaryReader> act, int requiredNumberOfBytes)
+    {
+        // Arrange
+        var bytes = new byte[requiredNumberOfBytes - 1];
+        using var stream = new MemoryStream(bytes);
+        using var reader = new BinaryReader(stream);
+
+        // Act and Assert
+        Assert.Throws<EndOfStreamException>(() => act(reader));
+    }
+
     #region ReadStringEbcdic
 
     [Fact]
@@ -19,7 +55,7 @@ public class BinaryReaderExtensionMethodsTest
     [Fact]
     public void ShouldConvertCharacters()
     {
-        VerifyValueFromByteStream("J", r => r.ReadStringEbcdic(1), new byte[] { 0xD1 });
+        VerifyValueFromByteStream("J", r => r.ReadStringEbcdic(1), new byte[] {0xD1});
     }
 
     [Fact]
@@ -47,7 +83,7 @@ public class BinaryReaderExtensionMethodsTest
     [Fact]
     public void ShouldConvertToInt16()
     {
-        VerifyValueFromByteStream(2, r => r.ReadInt16BigEndian(), new byte[] { 0, 2 });
+        VerifyValueFromByteStream(2, r => r.ReadInt16BigEndian(), new byte[] {0, 2});
     }
 
     [Fact]
@@ -75,7 +111,7 @@ public class BinaryReaderExtensionMethodsTest
     [Fact]
     public void ShouldConvertToInt32()
     {
-        VerifyValueFromByteStream(3, r => r.ReadInt32BigEndian(), new byte[] { 0, 0, 0, 3 });
+        VerifyValueFromByteStream(3, r => r.ReadInt32BigEndian(), new byte[] {0, 0, 0, 3});
     }
 
     [Fact]
@@ -109,7 +145,7 @@ public class BinaryReaderExtensionMethodsTest
     [Fact]
     public void ShouldConvertToSingle()
     {
-        VerifyValueFromByteStream(1f, r => r.ReadSingleIbm(), new byte[] { 65, 16, 0, 0 });
+        VerifyValueFromByteStream(1f, r => r.ReadSingleIbm(), new byte[] {65, 16, 0, 0});
     }
 
     [Fact]
@@ -119,40 +155,4 @@ public class BinaryReaderExtensionMethodsTest
     }
 
     #endregion
-
-    private static void VerifyValueFromByteStream<T>(T expected, Func<BinaryReader, T> act, byte[] bytes)
-    {
-        using (var stream = new MemoryStream(bytes))
-        using (var reader = new BinaryReader(stream))
-        {
-            // Act
-            T actual = act(reader);
-
-            // Assert
-            actual.Should().Be(expected);
-        }
-    }
-
-    public static void VerifyBytesConsumed(Action<BinaryReader> act, int expectedNumberOfBytes)
-    {
-        var bytes = new byte[2 * expectedNumberOfBytes];
-        using var stream = new MemoryStream(bytes);
-        using var reader = new BinaryReader(stream);
-        // Act
-        act(reader);
-
-        // Assert
-        stream.Position.Should().Be(expectedNumberOfBytes, "Wrong number of bytes were consumed.");
-    }
-
-    private static void VerifyThrowsExceptionIfStreamTooShort(Action<BinaryReader> act, int requiredNumberOfBytes)
-    {
-        // Arrange
-        var bytes = new byte[requiredNumberOfBytes - 1];
-        using var stream = new MemoryStream(bytes);
-        using var reader = new BinaryReader(stream);
-
-        // Act and Assert
-        Assert.Throws<EndOfStreamException>(() => act(reader));
-    }
 }

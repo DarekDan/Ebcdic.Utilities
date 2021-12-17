@@ -3,14 +3,14 @@
 public static class BinaryReaderExtensionMethods
 {
     /// <summary>
-    /// Reads the requested number of 8-bit EBCDIC encoded characters from the stream and converts them to a 
-    /// Unicode string.
+    ///     Reads the requested number of 8-bit EBCDIC encoded characters from the stream and converts them to a
+    ///     Unicode string.
     /// </summary>
     /// <param name="reader">Input reader</param>
     /// <param name="count">The number of bytes to read</param>
     /// <returns>
-    /// Unicode encoded string converted from bytes read from the stream.
-    /// The length of the string might be less than the number of bytes requested if the end of the stream is reached.
+    ///     Unicode encoded string converted from bytes read from the stream.
+    ///     The length of the string might be less than the number of bytes requested if the end of the stream is reached.
     /// </returns>
     public static string ReadStringEbcdic(this BinaryReader reader, int count)
     {
@@ -20,9 +20,9 @@ public static class BinaryReaderExtensionMethods
     }
 
     /// <summary>
-    /// Reads a 16-bit integer from the stream that has been encoded as big endian.
+    ///     Reads a 16-bit integer from the stream that has been encoded as big endian.
     /// </summary>
-    public static Int16 ReadInt16BigEndian(this BinaryReader reader)
+    public static short ReadInt16BigEndian(this BinaryReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, 2);
@@ -30,9 +30,9 @@ public static class BinaryReaderExtensionMethods
     }
 
     /// <summary>
-    /// Reads a 32-bit integer from the stream that has been encoded as big endian.
+    ///     Reads a 32-bit integer from the stream that has been encoded as big endian.
     /// </summary>
-    public static Int32 ReadInt32BigEndian(this BinaryReader reader)
+    public static int ReadInt32BigEndian(this BinaryReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, 4);
@@ -40,8 +40,8 @@ public static class BinaryReaderExtensionMethods
     }
 
     /// <summary>
-    /// Reads a single precision 32-bit floating point number from the stream 
-    /// that has been encoded in IBM System/360 Floating Point format
+    ///     Reads a single precision 32-bit floating point number from the stream
+    ///     that has been encoded in IBM System/360 Floating Point format
     /// </summary>
     /// <returns>IEEE formatted single precision floating point</returns>
     public static float ReadSingleIbm(this BinaryReader reader)
@@ -52,7 +52,7 @@ public static class BinaryReaderExtensionMethods
     }
 
     /// <summary>
-    /// Reads a pack decimal from the stream
+    ///     Reads a pack decimal from the stream
     /// </summary>
     /// <param name="reader">The reader from which the bytes will be read</param>
     /// <param name="storageLength">The total storage length of the packed decimal</param>
@@ -65,7 +65,7 @@ public static class BinaryReaderExtensionMethods
         return IbmConverter.ToUnpackedDecimal(bytes, scale);
     }
 
-    static byte[] ReadBytes(BinaryReader reader, int count)
+    private static byte[] ReadBytes(BinaryReader reader, int count)
     {
         var bytes = reader.ReadBytes(count);
         if (bytes.Length < count)
