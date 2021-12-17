@@ -4,7 +4,25 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Description>A .Net 6 port of [Unplugged IBM bits](https://github.com/jfoshee/UnpluggedIbmBits)</Description>
+    <PackageProjectUrl>https://github.com/DarekDan/Ebcdic.Utilities</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DarekDan/Ebcdic.Utilities</RepositoryUrl>
+    <SignAssembly>False</SignAssembly>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.MD</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.MD">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />

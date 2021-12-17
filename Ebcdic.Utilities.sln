@@ -9,10 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ebcdic.Utilities.Tests", "E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14EFD251-C865-44E5-AC1D-F4BAD5823D0F}"
 	ProjectSection(SolutionItems) = preProject
+		icon.png = icon.png
+		icon.xcf = icon.xcf
+		package.ps1 = package.ps1
 		README.MD = README.MD
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ebcdic.Utilities.Console", "Ebcdic.Utilities.Console\Ebcdic.Utilities.Console.csproj", "{22657847-B8D7-4725-A945-E34B00CD7429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ebcdic.Utilities.Console", "Ebcdic.Utilities.Console\Ebcdic.Utilities.Console.csproj", "{22657847-B8D7-4725-A945-E34B00CD7429}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
