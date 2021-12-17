@@ -1,4 +1,4 @@
-# Ebcidic Utilities
+# EBCDIC Utilities
 
 A .Net 6 port of [Unplugged IBM bits](https://github.com/jfoshee/UnpluggedIbmBits)
 
