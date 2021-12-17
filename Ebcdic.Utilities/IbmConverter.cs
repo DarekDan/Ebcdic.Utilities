@@ -8,14 +8,14 @@ public static class IbmConverter
     static IbmConverter()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        _ebcdic = Encoding.GetEncoding("IBM037");
-        _unicode = Encoding.Unicode;
+        Ebcdic = Encoding.GetEncoding("IBM037");
+        Unicode = Encoding.Unicode;
     }
 
     #region String
 
-    static readonly Encoding _unicode;
-    static readonly Encoding _ebcdic;
+    static readonly Encoding Unicode;
+    static readonly Encoding Ebcdic;
 
     /// <summary>
     /// Returns a Unicode string converted from a byte array of EBCDIC encoded characters
@@ -29,13 +29,13 @@ public static class IbmConverter
     /// Returns a Unicode string converted from a byte array of EBCDIC encoded characters 
     /// starting at the specified position
     /// </summary>
+    /// <param name="value">String value to convert</param>
     /// <param name="startingIndex">
     /// Zero-based index of starting position in value array
     /// </param>
     public static string ToString(byte[] value, int startingIndex)
     {
-        if (ReferenceEquals(null, value))
-            throw new ArgumentNullException("value");
+        ArgumentNullException.ThrowIfNull(value);
         return ToString(value, startingIndex, value.Length - startingIndex);
     }
 
@@ -43,6 +43,7 @@ public static class IbmConverter
     /// Returns a Unicode string converted from a byte array of EBCDIC encoded characters 
     /// starting at the specified position of the given length
     /// </summary>
+    /// <param name="value">Byte array to convert</param>
     /// <param name="startingIndex">
     /// Zero-based index of starting position in value array
     /// </param>
@@ -51,8 +52,8 @@ public static class IbmConverter
     /// </param>
     public static string ToString(byte[] value, int startingIndex, int length)
     {
-        var unicodeBytes = Encoding.Convert(_ebcdic, _unicode, value, startingIndex, length);
-        return _unicode.GetString(unicodeBytes);
+        var unicodeBytes = Encoding.Convert(Ebcdic, Unicode, value, startingIndex, length);
+        return Unicode.GetString(unicodeBytes);
     }
 
     /// <summary>
@@ -67,6 +68,7 @@ public static class IbmConverter
     /// Returns a byte array of EBCDIC encoded characters converted from a Unicode substring 
     /// starting at the specified position
     /// </summary>
+    /// <param name="value">String value to convert</param>
     /// <param name="startingIndex">
     /// Zero-based starting index of substring
     /// </param>
@@ -79,6 +81,7 @@ public static class IbmConverter
     /// Returns a byte array of EBCDIC encoded characters converted from a Unicode substring 
     /// starting at the specified position with the given length
     /// </summary>
+    /// <param name="value">String value to convert</param>
     /// <param name="startingIndex">
     /// Zero-based starting index of substring
     /// </param>
@@ -87,10 +90,9 @@ public static class IbmConverter
     /// </param>
     public static byte[] GetBytes(string value, int startingIndex, int length)
     {
-        if (ReferenceEquals(null, value))
-            throw new ArgumentNullException("value");
-        var unicodeBytes = _unicode.GetBytes(value.ToCharArray(startingIndex, length));
-        return Encoding.Convert(_unicode, _ebcdic, unicodeBytes);
+        ArgumentNullException.ThrowIfNull(value);
+        var unicodeBytes = Unicode.GetBytes(value.ToCharArray(startingIndex, length));
+        return Encoding.Convert(Unicode, Ebcdic, unicodeBytes);
     }
 
     #endregion
@@ -110,9 +112,8 @@ public static class IbmConverter
     /// </summary>
     public static Int16 ToInt16(byte[] value, int startIndex)
     {
-        if (ReferenceEquals(null, value))
-            throw new ArgumentNullException("value");
-        var bytes = new byte[] { value[startIndex + 1], value[startIndex] };
+        ArgumentNullException.ThrowIfNull(value);
+        var bytes = new[] { value[startIndex + 1], value[startIndex] };
         return BitConverter.ToInt16(bytes, 0);
     }
 
@@ -122,7 +123,7 @@ public static class IbmConverter
     public static byte[] GetBytes(short value)
     {
         var b = BitConverter.GetBytes(value);
-        return new byte[] { b[1], b[0] };
+        return new[] { b[1], b[0] };
     }
 
     #endregion
@@ -142,16 +143,15 @@ public static class IbmConverter
     /// </summary>
     public static Int32 ToInt32(byte[] value, int startIndex)
     {
-        if (ReferenceEquals(null, value))
-            throw new ArgumentNullException("value");
-        var bytes = new byte[] { value[startIndex + 3], value[startIndex + 2], value[startIndex + 1], value[startIndex] };
+        ArgumentNullException.ThrowIfNull(value);
+        var bytes = new[] { value[startIndex + 3], value[startIndex + 2], value[startIndex + 1], value[startIndex] };
         return BitConverter.ToInt32(bytes, 0);
     }
 
     public static byte[] GetBytes(int value)
     {
         var b = BitConverter.GetBytes(value);
-        return new byte[] { b[3], b[2], b[1], b[0] };
+        return new[] { b[3], b[2], b[1], b[0] };
     }
 
     #endregion
@@ -168,8 +168,7 @@ public static class IbmConverter
     /// </summary>
     public static Single ToSingle(byte[] value)
     {
-        if (ReferenceEquals(null, value))
-            throw new ArgumentNullException("value");
+        ArgumentNullException.ThrowIfNull(value);
         if (0 == BitConverter.ToInt32(value, 0))
             return 0;
 
@@ -232,17 +231,19 @@ public static class IbmConverter
 
     #region Packed Decimal
 
+    // ReSharper disable once CommentTypo
+    // ReSharper disable once InvalidXmlDocComment
     /// <summary>
     /// Unpack the byte array into a decimal
     /// </summary>
     /// <remarks>
     /// From the java version made by p4w3l located here : http://cobol2j.cvs.sourceforge.net/viewvc/cobol2j/cobol2j/src/main/java/net/sf/cobol2j/RecordSet.java?revision=1.25&view=markup from
-    /// the open source projet cobol2j at http://sourceforge.net/projects/cobol2j/ under LGPLV2
+    /// the open source project cobol2j at http://sourceforge.net/projects/cobol2j/ under LGPLV2
     /// </remarks>
     public static Decimal ToUnpackedDecimal(byte[] inputData, int scale)
     {
         var inputLength = inputData.Length;
-        var strbuf = new StringBuilder();
+        var stringBuffer = new StringBuilder();
         int tempData;
         int tempData1;
 
@@ -251,20 +252,20 @@ public static class IbmConverter
             tempData = inputData[i];
             tempData1 = tempData & 0xF0;
             int tempData2 = tempData1 >> 4;
-            strbuf.Append(tempData2);
+            stringBuffer.Append(tempData2);
 
             if (i < (inputLength - 1))
             {
                 tempData = inputData[i];
                 tempData1 = tempData & 0x0F;
-                strbuf.Append(tempData1);
+                stringBuffer.Append(tempData1);
             }
         }
 
-        if ((scale > 0 && strbuf.Length - scale > 0))
-            strbuf.Insert(strbuf.Length - scale, '.');
+        if ((scale > 0 && stringBuffer.Length - scale > 0))
+            stringBuffer.Insert(stringBuffer.Length - scale, '.');
 
-        var result = decimal.Parse(strbuf.ToString());
+        var result = decimal.Parse(stringBuffer.ToString());
 
         tempData = inputData[inputLength - 1];
         tempData1 = tempData & 0x0F;
@@ -278,6 +279,7 @@ public static class IbmConverter
         return result;
     }
 
+    // ReSharper disable once CommentTypo
     /// <summary>
     /// Convert the decimal value into its packed value
     /// </summary>

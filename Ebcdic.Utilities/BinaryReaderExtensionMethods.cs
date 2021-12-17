@@ -6,6 +6,7 @@ public static class BinaryReaderExtensionMethods
     /// Reads the requested number of 8-bit EBCDIC encoded characters from the stream and converts them to a 
     /// Unicode string.
     /// </summary>
+    /// <param name="reader">Input reader</param>
     /// <param name="count">The number of bytes to read</param>
     /// <returns>
     /// Unicode encoded string converted from bytes read from the stream.
@@ -13,8 +14,7 @@ public static class BinaryReaderExtensionMethods
     /// </returns>
     public static string ReadStringEbcdic(this BinaryReader reader, int count)
     {
-        if (ReferenceEquals(null, reader))
-            throw new ArgumentNullException("reader");
+        ArgumentNullException.ThrowIfNull(reader);
         var bytes = reader.ReadBytes(count);
         return IbmConverter.ToString(bytes);
     }
@@ -24,8 +24,7 @@ public static class BinaryReaderExtensionMethods
     /// </summary>
     public static Int16 ReadInt16BigEndian(this BinaryReader reader)
     {
-        if (ReferenceEquals(null, reader))
-            throw new ArgumentNullException("reader");
+        ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, 2);
         return IbmConverter.ToInt16(bytes);
     }
@@ -35,8 +34,7 @@ public static class BinaryReaderExtensionMethods
     /// </summary>
     public static Int32 ReadInt32BigEndian(this BinaryReader reader)
     {
-        if (ReferenceEquals(null, reader))
-            throw new ArgumentNullException("reader");
+        ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, 4);
         return IbmConverter.ToInt32(bytes);
     }
@@ -48,8 +46,7 @@ public static class BinaryReaderExtensionMethods
     /// <returns>IEEE formatted single precision floating point</returns>
     public static float ReadSingleIbm(this BinaryReader reader)
     {
-        if (ReferenceEquals(null, reader))
-            throw new ArgumentNullException("reader");
+        ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, 4);
         return IbmConverter.ToSingle(bytes);
     }
@@ -63,8 +60,7 @@ public static class BinaryReaderExtensionMethods
     /// <returns>The decimal read from the stream</returns>
     public static decimal ReadPackedDecimalIbm(this BinaryReader reader, byte storageLength, byte scale)
     {
-        if (ReferenceEquals(null, reader))
-            throw new ArgumentNullException("reader");
+        ArgumentNullException.ThrowIfNull(reader);
         var bytes = ReadBytes(reader, storageLength);
         return IbmConverter.ToUnpackedDecimal(bytes, scale);
     }
