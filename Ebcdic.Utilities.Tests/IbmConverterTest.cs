@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.IO;
+using FluentAssertions;
 using Xunit;
 
 namespace Ebcdic.Utilities.Tests;
@@ -536,6 +538,30 @@ public class IbmConverterTest
         var result = IbmConverter.ToUnpackedDecimal(bytes, 2);
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void PackedDecimalConversion()
+    {
+        decimal expected = 12345.6789m;
+        byte[] bytes;
+        using (var stream = new MemoryStream())
+        {
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.WriteIbmPackedDecimal(expected);
+            }
+            bytes = stream.ToArray();
+        }
+        using (var stream = new MemoryStream(bytes))
+        {
+            using (var reader = new BinaryReader(stream))
+            {
+                var result = reader.ReadPackedDecimalIbm((byte)bytes.Length,4);
+                result.Should().Be(expected);
+            }
+        }
+
     }
 
     #endregion
